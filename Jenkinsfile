@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 echo 'Checking out latest source code'
@@ -17,8 +16,6 @@ pipeline {
 
         stage('Generate Infrastructure') {
             steps {
-                echo 'Generating infrastructure files'
-
                 sh '''
                     python3 --version
                     python3 generator/generate.py
@@ -28,41 +25,30 @@ pipeline {
 
         stage('Validate Configuration') {
             steps {
-                echo 'Validating Docker Compose configuration'
-
                 sh '''
-                    docker compose -p generated \
-                    -f generated/compose.yaml config --quiet
+                    docker compose -p generated -f generated/compose.yaml config --quiet
                 '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo 'Building application Docker image'
-
                 sh '''
-                    docker compose -p generated \
-                    -f generated/compose.yaml build
+                    docker compose -p generated -f generated/compose.yaml build
                 '''
             }
         }
 
         stage('Deploy Application') {
             steps {
-                echo 'Deploying application'
-
                 sh '''
-                    docker compose -p generated \
-                    -f generated/compose.yaml up -d
+                    docker compose -p generated -f generated/compose.yaml up -d
                 '''
             }
         }
 
         stage('Health Check') {
             steps {
-                echo 'Checking application health'
-
                 sh '''
                     for attempt in $(seq 1 15)
                     do
@@ -76,11 +62,7 @@ pipeline {
                         sleep 2
                     done
 
-                    echo "Application health check failed"
-
-                    docker compose -p generated \
-                    -f generated/compose.yaml logs app
-
+                    docker compose -p generated -f generated/compose.yaml logs app
                     exit 1
                 '''
             }
