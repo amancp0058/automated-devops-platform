@@ -1,0 +1,16 @@
+# Python Dependencies
+flask==3.0.0
+requests==2.31.0
+
+# Application Configuration
+APP_TYPE=python
+APP_PORT=5000
+START_COMMAND=python app.py
+
+# Required Servers
+MYSQL=false
+REDIS=false
+
+# Resource Requirements
+CPU=1
+MEMORY=512MB
